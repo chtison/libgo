@@ -1,11 +1,12 @@
 /*
-shellcolors package is a simple interface for terminal Select Graphic
+Package shellcolors is a simple interface for terminal Select Graphic
 Rendition (SGR).
 
 https://en.wikipedia.org/wiki/ANSI_escape_code#graphics
 
-shellcolors package lets you modify style of you outputed text in a terminal
+Package shellcolors lets you modify style of you outputed text in a terminal
 like the boldness or the background color.
+However, some SGR codes might not be supported by your terminal.
 
 	package main
 
@@ -23,7 +24,7 @@ like the boldness or the background color.
 	}
 
 
-The type ShellColor implements the interface fmt.Stringer
+The type ShellColor implements the interface fmt.Stringer.
 
 There are 3 primary functions to handle ShellColor type:
 

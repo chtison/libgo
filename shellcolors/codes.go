@@ -1,5 +1,6 @@
 package shellcolors
 
+// CodeSGR represents a SGR code
 type CodeSGR uint8
 
 // Start and end of an SGR code: "\033[...;...;...;m".
@@ -9,6 +10,8 @@ const (
 	codeSGR_end       = "m"
 )
 
+// First range of codeSGR
+// Reset is the one which will reset any previous codeSGR
 const (
 	Reset CodeSGR = iota // Cancel all previous parameters
 	Bold
@@ -22,6 +25,7 @@ const (
 	CrossedOut
 )
 
+// Second range of codeSGR
 const (
 	Fraktur CodeSGR = 20 + iota
 	NoBold
