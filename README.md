@@ -11,5 +11,5 @@ Package libgo owns the following sub-packages:
 # Install
 
 ```shell
-$ make install
+$ go get -v github.com/chtison/libgo/...
 ```
