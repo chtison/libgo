@@ -28,7 +28,7 @@ func main() {
 	))
 }
 ```
-
+![output](output.png)
 
 The type ShellColor implements the [fmt.Stringer](https://golang.org/pkg/fmt/#Stringer) interface.
 
