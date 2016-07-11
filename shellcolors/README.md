@@ -1,5 +1,7 @@
 # Golang package shellcolors
 
+[![GoDoc](https://godoc.org/github.com/chtison/libgo/shellcolors?status.svg)](https://godoc.org/github.com/chtison/libgo/shellcolors)
+
 Package shellcolors is a simple interface for terminal Select Graphic Rendition (SGR).
 
 #### Install this package + the cli frontend of this package: [sc](cmd/sc)
