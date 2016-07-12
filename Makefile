@@ -1,6 +1,7 @@
 PACKAGES_ROOT := github.com/chtison/libgo
 PACKAGES := $(addprefix $(PACKAGES_ROOT), \
 			/shellcolors/cmd/sc \
+			/baseconverter \
 		)
 
 GO_INSTALL := go install
@@ -9,6 +10,9 @@ GO_DOC     := godoc -http=':6060'
 GO_DOC_URL := http://127.0.0.1:6060/pkg/
 GO_TEST    := go test -v ./...
 
+main:
+	$(info $(usage))
+	@true
 define usage
 usage: make [command]
 make list                # print all go packages managed by this makefile
@@ -19,12 +23,11 @@ make clean               # remove all go packages
 make re                  # make clean && make install
 endef
 
-main:
-	$(info $(usage))
-	@true
-
 list:
-	$(foreach package, $(PACKAGES), @echo $(package))
+	$(call list)
+define list
+@for package in $(PACKAGES); do echo $$package ; done
+endef
 
 doc:
 	@echo "$(GO_DOC_URL)$(PACKAGES_ROOT)"
@@ -34,10 +37,16 @@ test:
 	$(GO_TEST)
 
 install:
-	$(foreach package, $(PACKAGES), $(GO_INSTALL) $(package))
+	$(call install)
+define install
+@for package in $(PACKAGES) ; do $(GO_INSTALL) $$package ; done
+endef
 
 clean:
-	$(foreach package, $(PACKAGES), $(GO_CLEAN) $(package))
+	$(call clean)
+define clean
+@for package in $(PACKAGES) ; do $(GO_CLEAN) $$package ; done
+endef
 
 re: clean install
 

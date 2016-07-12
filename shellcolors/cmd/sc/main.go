@@ -1,5 +1,5 @@
 /*
-Package sc is a command line interface for the parent package shellcolors.
+Package sc is a command line interface for the package shellcolors.
 
 	$ sc green bold ; echo "Hello World !" ; sc reset
 */

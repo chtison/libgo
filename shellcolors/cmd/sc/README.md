@@ -3,7 +3,7 @@
 [![GoDoc](https://godoc.org/github.com/chtison/libgo/shellcolors/cmd/sc?status.svg)](https://godoc.org/github.com/chtison/libgo/shellcolors/cmd/sc)
 [![Build Status](https://travis-ci.org/chtison/libgo.svg?branch=master)](https://travis-ci.org/chtison/libgo)
 
-Package sc is a command line interface for the parent package [shellcolors](..).
+Package sc is a command line interface for the package [shellcolors](..).
 
 #### Install this command
 
