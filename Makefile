@@ -1,7 +1,7 @@
 PACKAGES_ROOT := github.com/chtison/libgo
 PACKAGES := $(addprefix $(PACKAGES_ROOT), \
 			/shellcolors/cmd/sc \
-			/baseconverter \
+			/baseconverter/cmd/bconv \
 		)
 
 GO_INSTALL := go install -v

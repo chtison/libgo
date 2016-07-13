@@ -192,8 +192,6 @@ However, some commands might not be supported by your terminal.
 Type 'sc list' to get all available commands that sc accept (case sensitive).
 
 Example: sc bold green ; echo "Hello World !" ; sc reset
-
-Documentation: https://en.wikipedia.org/wiki/ANSI_escape_code#graphics
 `
 
 func printUsage() {
