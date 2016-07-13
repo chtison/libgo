@@ -5,7 +5,7 @@
 
 Package sc is a command line interface for the package [shellcolors](..).
 
-## Install this command
+## Install
 
 ```sh
 $ go get -v github.com/chtison/libgo/shellcolors/cmd/sc
