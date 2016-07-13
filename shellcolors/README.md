@@ -5,12 +5,12 @@
 
 Package shellcolors is a simple interface for terminal Select Graphic Rendition (SGR).
 
-### Install this package + the cli frontend of this package: [sc](cmd/sc)
+## Install this package + the cli frontend of this package: [sc](cmd/sc)
 ```
 $ go get -v github.com/chtison/libgo/shellcolors/...
 ```
 
-### Synopsys
+## Documentation 
 
 Package shellcolors lets you modify style of you outputed text in a terminal
 like the boldness or the background color.
@@ -64,7 +64,7 @@ func NewWithColorRGB(red, green, blue uint8, codes ...CodeSGR) *ShellColor { }
 func NewWithBgColor(color uint8, codes ...CodeSGR) *ShellColor { }
 func NewWithBgColorRGB(red, green, blue uint8, codes ...CodeSGR) *ShellColor { }
 ```
-#### All codes
+#### All codes SGR
 ```go
 // First range of codeSGR
 // Reset is the one which will reset any previous codeSGR
