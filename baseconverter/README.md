@@ -5,7 +5,7 @@
 
 Package baseconverter is a set of functions which perform numerical base conversion.
 
-## Install this package
+## Install this package + the cli frontend of this package: [bconv](cmd/bconv)
 ```
 $ go get -v github.com/chtison/libgo/baseconverter/...
 ```
