@@ -11,6 +11,7 @@ Package shellcolors is a simple interface for terminal Select Graphic Rendition 
 
 Package baseconverter is a set of functions which perform numerical base conversion.
 - [baseconverter](baseconverter/)
+	- [cmd/bconv](baseconverter/cmd/bconv)
 
 # Install
 
