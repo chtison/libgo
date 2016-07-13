@@ -50,4 +50,4 @@ endef
 
 re: clean install
 
-.PHONY: main list doc install clean re
+.PHONY: main list doc test install clean re

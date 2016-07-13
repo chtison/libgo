@@ -1,8 +1,10 @@
 /*
-Package bconv is command line interface for the package baseconverter.
+Package bconv is a command line interface for the package baseconverter.
 
 	$ bconv 51966 0123456789 0123456789abcdef
 	cafe
+	$ bconv 101010 01 0123456789
+	42
 */
 package main
 

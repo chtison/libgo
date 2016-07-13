@@ -10,7 +10,7 @@ Package shellcolors is a simple interface for terminal Select Graphic Rendition 
 $ go get -v github.com/chtison/libgo/shellcolors/...
 ```
 
-## Documentation 
+## Documentation
 
 Package shellcolors lets you modify style of you outputed text in a terminal
 like the boldness or the background color.
@@ -34,6 +34,7 @@ func main() {
 }
 ```
 ![output](output.png)
+> fishshell iTerm2 osx
 
 The type ShellColor implements the [fmt.Stringer](https://golang.org/pkg/fmt/#Stringer) interface.
 
