@@ -102,6 +102,15 @@ func DecimalToBase(number *big.Int, toBase string) (result string, err error) {
 }
 
 /*
+UInt64ToBase is similar to DecimalToBase function but takes a number as uint64
+type instead of a *math/big.Int.
+*/
+func UInt64ToBase(number uint64, toBase string) (result string, err error) {
+	nbr := big.NewInt(0).SetUint64(number)
+	return DecimalToBase(nbr, toBase)
+}
+
+/*
 BaseToBase converts a number in base inBase to base toBase.
 
 BaseToBase returns in e1 error from BaseToDecimal function and in e2 error from

@@ -23,7 +23,7 @@ For example, you can convert a decimal number to base 16:
         )
 
         func main() {
-                nbrInBase16, _ := bc.DecimalToBase(51966, "0123456789abcdef")
+                nbrInBase16, _ := bc.UInt64ToBase(51966, "0123456789abcdef")
                 fmt.Println(nbrInBase16)
         }
 
