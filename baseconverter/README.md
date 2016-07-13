@@ -32,14 +32,14 @@ base[i] != base[j] with i != j
 package main
 
 import (
-        "fmt"
+	"fmt"
 
-        bc "github.com/chtison/libgo/baseconverter"
+	bc "github.com/chtison/libgo/baseconverter"
 )
 
 func main() {
-        nbrInBase16, _ := bc.UInt64ToBase(51966, "0123456789abcdef")
-        fmt.Println(nbrInBase16)
+	nbrInBase16, _ := bc.UInt64ToBase(51966, "0123456789abcdef")
+	fmt.Println(nbrInBase16)
 }
 ```
 
@@ -48,14 +48,14 @@ func main() {
 package main
 
 import (
-        "fmt"
+	"fmt"
 
-        bc "github.com/chtison/libgo/baseconverter"
+	bc "github.com/chtison/libgo/baseconverter"
 )
 
 func main() {
-        nbr, _ := bc.BaseToDecimal("101010", "01")
-        fmt.Println(nbr)
+	nbr, _ := bc.BaseToDecimal("101010", "01")
+	fmt.Println(nbr)
 }
 ```
 
