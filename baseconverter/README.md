@@ -5,15 +5,12 @@
 
 Package baseconverter is a set of functions which perform numerical base conversion.
 
-### Install this package
+## Install this package
 ```
 $ go get -v github.com/chtison/libgo/baseconverter/...
 ```
 
-### Documentation
-
-Package baseconverter is a set of functions which perform numerical base
-conversion.
+## Documentation
 
 A number is represented as a *math/big.Int in decimal base or as a string
 (interpreted as UTF-8 encoded) in any base.
@@ -30,7 +27,7 @@ len([]rune(base)) >= 2
 base[i] != base[j] with i != j
 ```
 
-For example, you can convert a decimal number to base 16:
+#### For example, you can convert a decimal number to base 16:
 ```go
 package main
 
@@ -46,7 +43,7 @@ func main() {
 }
 ```
 
-Or convert back a number in base "01" (base 2) to base 10:
+#### Or convert back a number in base "01" (base 2) to base 10:
 ```go
 package main
 
@@ -62,7 +59,7 @@ func main() {
 }
 ```
 
-Or convert a number from any base to any other:
+#### Or convert a number from any base to any other:
 ```go
 package main
 
