@@ -5,13 +5,14 @@
 
 Package sc is a command line interface for the package [shellcolors](..).
 
-#### Install this command
+## Install this command
 
 ```sh
 $ go get -v github.com/chtison/libgo/shellcolors/cmd/sc
 ```
 
-#### Examples
+## Examples
 
 ![output1](output1.png)
 ![output2](output2.png)
+> fishshell iTerm2 osx
