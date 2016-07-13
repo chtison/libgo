@@ -4,7 +4,7 @@ PACKAGES := $(addprefix $(PACKAGES_ROOT), \
 			/baseconverter \
 		)
 
-GO_INSTALL := go install
+GO_INSTALL := go install -v
 GO_CLEAN   := go clean -i
 GO_DOC     := godoc -http=':6060'
 GO_DOC_URL := http://127.0.0.1:6060/pkg/

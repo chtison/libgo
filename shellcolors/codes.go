@@ -49,7 +49,7 @@ const (
 	Magenta
 	Cyan
 	White
-	CustomColor // See notes
+	CustomColor // Use ShellColor.Color(:) or ShellColor.ColorRGB(:,:,:)
 	DefaultColor
 )
 
@@ -63,7 +63,7 @@ const (
 	BgMagenta
 	BgCyan
 	BgWhite
-	BgCustomColor
+	BgCustomColor // Use ShellColor.BgColor(:) or ShellColor.BgColorRGB(:,:,:)
 	BgDefaultColor
 )
 
