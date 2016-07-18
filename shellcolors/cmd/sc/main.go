@@ -156,6 +156,9 @@ func main() {
 		} else if os.Args[1] == "examples" {
 			printExample()
 			return
+		} else if os.Args[1] == "list-color" {
+			printColors()
+			return
 		}
 	}
 	shellColor := sc.New()
@@ -185,6 +188,7 @@ func main() {
 
 const usage = `usage: sc {cmd}+
        sc list
+       sc list-color
 
 Shellcolors lets you modify style of you outputed text in a terminal
 like the boldness or the background color.
@@ -233,4 +237,12 @@ func printError(arg string) {
 		sc.NewWithColor(208, sc.Bold),
 		sc.New(sc.Reset),
 		arg))
+}
+
+func printColors() {
+	for i := uint8(0); i < 255; i++ {
+		fmt.Println(fmt.Sprintf("%s%d Hello %s Hello %d%s",
+			sc.NewWithColor(i), i, sc.New(sc.Bold), i, sc.New(sc.Reset),
+		))
+	}
 }
