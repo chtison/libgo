@@ -13,6 +13,9 @@ Package baseconverter is a set of functions which perform numerical base convers
 - [baseconverter](baseconverter/)
 	- [cmd/bconv](baseconverter/cmd/bconv)
 
+Package tee is a package command which mimics the UNIX command tee.
+- [tee](tee/)
+
 # Install
 
 ```shell
