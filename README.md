@@ -6,15 +6,15 @@
 [![Build Status](https://travis-ci.org/chtison/libgo.svg?branch=master)](https://travis-ci.org/chtison/libgo)
 
 Package shellcolors is a simple interface for terminal Select Graphic Rendition (SGR).
-- [shellcolors](shellcolors/)
+- [shellcolors](shellcolors)
 	- [cmd/sc](shellcolors/cmd/sc)
 
 Package baseconverter is a set of functions which perform numerical base conversion.
-- [baseconverter](baseconverter/)
+- [baseconverter](baseconverter)
 	- [cmd/bconv](baseconverter/cmd/bconv)
 
-Package tee is a package command which mimics the UNIX command tee.
-- [tee](tee/)
+Package tee is a package command which mimics the UNIX command's tee.
+- [cmd/tee](cmd/tee)
 
 # Install
 
