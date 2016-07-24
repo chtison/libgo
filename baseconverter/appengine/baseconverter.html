@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                <title>Base Converter</title>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+                <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+                <link rel="icon" href="/static/CupOfTea.png">
+        </head>
+        <body class="w3-light-grey">
+                <noscript>
+                        <div class="w3-container w3-pale-red w3-text-red">
+                                <p>Enable Javascript to add features to this app.</p>
+                        </div>
+                </noscript>
+                <div class="w3-container w3-hide-small" style="height:16px;">
+                </div>
+                <div class="w3-row">
+                        <div class="w3-col w3-center w3-quarter w3-padding-jumbo w3-hide-small" style="min-height:1px">
+                        </div>
+                        <div class="w3-col w3-quarter w3-hide-small w3-right" style="min-height:1px"></div>
+                        <div class="w3-rest">
+                                <div class="w3-card-24 w3-white">
+                                        <div class="w3-container w3-light-blue">
+                                                <a href="https://github.com/chtison/libgo/tree/master/baseconverter/appengine" class="w3-hoverable w3-right w3-padding-12"><i class="fa fa-github w3-xlarge"></i></a>
+                                                <h2>Base Converter</h2>
+                                        </div>
+                                        <form id="form" class="w3-padding" method="post" action="/">
+                                                <label for="number" class="w3-label w3-validate w3-text-dark-grey">Number</label>
+                                                <input id="number" name="number" class="w3-input w3-border" type="text" autocomplete="off" required {{- with .Number }} value="{{ . }}"{{ end }}>
+                                                <hr>
+                                                <label for="inbase" class="w3-label w3-text-dark-grey">In Base</label>
+                                                <input id="inbase" name="inbase" class="w3-input w3-border" type="text" autocomplete="off" required {{- with .InBase }} value="{{ . }}"{{ end }}>
+                                                {{- with .ErrorInBase }}
+                                                <div class="w3-container w3-leftbar w3-border-red w3-pale-red"><p id="error-inbase" style="margin: 5px 0">{{ . }}</p></div>
+                                                {{- end }}
+                                                <hr>
+                                                <label for="tobase" class="w3-label w3-text-dark-grey">To Base</label>
+                                                <input id="tobase" name="tobase" class="w3-input w3-border" type="text" autocomplete="off" required {{- with .ToBase }} value="{{ . }}"{{ end }}>
+                                                {{- with .ErrorToBase }}
+                                                <div class="w3-container w3-leftbar w3-border-red w3-pale-red"><p id="error-tobase" style="margin: 5px 0">{{ . }}</p></div>
+                                                {{- end }}
+                                                <hr>
+                                                <button id="submit" type="submit" class="w3-btn w3-blue w3-margin-bottom"><i class="fa fa-calculator" style="margin-right:5px"></i>Convert</button>
+                                        </form>
+                                </div>
+                                {{- with .Result }}
+                                <div class="w3-container w3-left-bar w3-pale-blue">
+                                        <p>{{ . }}</p>
+                                </div>
+                                {{- end }}
+                        </div>
+                </div>
+        </body>
+</html>
