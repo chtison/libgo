@@ -12,7 +12,7 @@ func init() {
 	http.HandleFunc("/", handler)
 }
 
-var appTemplate = template.Must(template.ParseFiles("baseConverter.html"))
+var appTemplate = template.Must(template.ParseFiles("baseconverter.html"))
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
