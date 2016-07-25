@@ -17,7 +17,7 @@ import (
 	"path"
 
 	bc "github.com/chtison/libgo/baseconverter"
-	_ "github.com/chtison/libgo/baseconverter/appengine"
+	_ "github.com/chtison/libgo/baseconverter/http"
 )
 
 func main() {
@@ -46,7 +46,7 @@ func main() {
 }
 
 func listenAndServe(laddr string) {
-	dir := path.Join(os.Getenv("GOPATH"), "src/github.com/chtison/libgo/baseconverter/appengine")
+	dir := path.Join(os.Getenv("GOPATH"), "src/github.com/chtison/libgo/baseconverter/http")
 	if err := os.Chdir(dir); err != nil {
 		log.Fatalln("GOPATH is invalid or package is missing:", err)
 	}
@@ -60,7 +60,7 @@ func listenAndServe(laddr string) {
 }
 
 func handleStatic(w http.ResponseWriter, r *http.Request) {
-	file := path.Join(os.Getenv("GOPATH"), "src/github.com/chtison/libgo/baseconverter/appengine", r.URL.Path)
+	file := path.Join(os.Getenv("GOPATH"), "src/github.com/chtison/libgo/baseconverter/http", r.URL.Path)
 	http.ServeFile(w, r, file)
 	return
 }
