@@ -18,31 +18,38 @@
                 </div>
                 <div class="w3-row">
                         <div class="w3-col w3-center w3-quarter w3-padding-jumbo w3-hide-small" style="min-height:1px">
+                                <div class="w3-hide-medium w3-hide-small">
+                                        <input class="w3-input w3-center w3-light-grey w3-border" value="Drag &amp; Drop" disabled>
+                                        <input type="text" class="w3-input w3-border-light-grey w3-center" draggable="true" value="0123456789" disabled>
+                                        <input type="text" class="w3-input w3-border-light-grey w3-center" draggable="true" value="0123456789abcdef" disabled>
+                                        <input type="text" class="w3-input w3-border-light-grey w3-center" draggable="true" value="01" disabled>
+                                        <input type="text" class="w3-input w3-border-light-grey w3-center" draggable="true" value="😄🌵👻" disabled>
+                                </div>
                         </div>
                         <div class="w3-col w3-quarter w3-hide-small w3-right" style="min-height:1px"></div>
                         <div class="w3-rest">
                                 <div class="w3-card-24 w3-white">
                                         <div class="w3-container w3-light-blue">
-                                                <a href="https://github.com/chtison/libgo/tree/master/baseconverter/appengine" class="w3-hoverable w3-right w3-padding-12"><i class="fa fa-github w3-xlarge"></i></a>
+                                                <a href="https://github.com/chtison/libgo/tree/master/baseconverter/appengine" target="_blank" class="w3-hoverable w3-right w3-padding-12"><i class="fa fa-github w3-xlarge"></i></a>
                                                 <h2>Base Converter</h2>
                                         </div>
-                                        <form id="form" class="w3-padding" method="post" action="/">
+                                        <form class="w3-padding" method="post" action="/">
                                                 <label for="number" class="w3-label w3-validate w3-text-dark-grey">Number</label>
                                                 <input id="number" name="number" class="w3-input w3-border" type="text" autocomplete="off" required {{- with .Number }} value="{{ . }}"{{ end }}>
                                                 <hr>
                                                 <label for="inbase" class="w3-label w3-text-dark-grey">In Base</label>
                                                 <input id="inbase" name="inbase" class="w3-input w3-border" type="text" autocomplete="off" required {{- with .InBase }} value="{{ . }}"{{ end }}>
                                                 {{- with .ErrorInBase }}
-                                                <div class="w3-container w3-leftbar w3-border-red w3-pale-red"><p id="error-inbase" style="margin: 5px 0">{{ . }}</p></div>
+                                                <div class="w3-container w3-leftbar w3-border-red w3-pale-red"><p style="margin: 5px 0">{{ . }}</p></div>
                                                 {{- end }}
                                                 <hr>
                                                 <label for="tobase" class="w3-label w3-text-dark-grey">To Base</label>
                                                 <input id="tobase" name="tobase" class="w3-input w3-border" type="text" autocomplete="off" required {{- with .ToBase }} value="{{ . }}"{{ end }}>
                                                 {{- with .ErrorToBase }}
-                                                <div class="w3-container w3-leftbar w3-border-red w3-pale-red"><p id="error-tobase" style="margin: 5px 0">{{ . }}</p></div>
+                                                <div class="w3-container w3-leftbar w3-border-red w3-pale-red"><p style="margin: 5px 0">{{ . }}</p></div>
                                                 {{- end }}
                                                 <hr>
-                                                <button id="submit" type="submit" class="w3-btn w3-blue w3-margin-bottom"><i class="fa fa-calculator" style="margin-right:5px"></i>Convert</button>
+                                                <button type="submit" class="w3-btn w3-blue w3-margin-bottom"><i class="fa fa-calculator" style="margin-right:5px"></i>Convert</button>
                                         </form>
                                 </div>
                                 {{- with .Result }}
@@ -52,5 +59,6 @@
                                 {{- end }}
                         </div>
                 </div>
+                <script src="/static/baseconverter.js"></script>
         </body>
 </html>

@@ -12,7 +12,15 @@ func init() {
 	http.HandleFunc("/", handler)
 }
 
-var appTemplate = template.Must(template.ParseFiles("baseconverter.html"))
+var getHandlerTemplate = func() func() *template.Template {
+	var handlerTemplate *template.Template
+	return func() *template.Template {
+		if handlerTemplate == nil {
+			handlerTemplate = template.Must(template.ParseFiles("templates/baseconverter.html"))
+		}
+		return handlerTemplate
+	}
+}()
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
@@ -40,9 +48,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			data["Result"] = result
 		}
 
-		err := appTemplate.Execute(w, data)
+		handlerTemplate := getHandlerTemplate()
+		err := handlerTemplate.Execute(w, data)
 		if err != nil {
-			http.Error(w, "err := appTemplate.Execute(w, data)", http.StatusInternalServerError)
+			http.Error(w, "err := handlerTemplate.Execute(w, data)", http.StatusInternalServerError)
 			return
 		}
 		return
