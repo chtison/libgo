@@ -13,4 +13,7 @@ Package bconv is command line interface for the package [baseconverter](../..).
 	cafe
 	$ bconv 101010 01 0123456789
 	42
-	
+
+## HTTP Frontend
+	$ bconv serve ':4242'
+	Listen on [::]:4242
