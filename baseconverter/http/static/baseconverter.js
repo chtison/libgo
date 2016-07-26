@@ -31,27 +31,70 @@ $(document).ready(function() {
                 addCell();
         });
 
-        addCell();
-        let cell = addCell();
-        cell.attr('value', '0123456789ABCDEF');
-        cell = addCell();
-        cell.attr('value', '😃🌵🚀🍉🐳');
+        initCells();
 
         bases.fadeIn();
 });
 
-function addCell() {
+function initCells() {
+
+        if (typeof(Storage) === "undefined") {
+                defaultCells();
+                return ;
+        }
+
+        let a = window.localStorage.getItem('bases');
+        if (a === null || a === "") {
+                defaultCells();
+                return ;
+        }
+        a = JSON.parse(a);
+        for (let i in a) {
+                addCell(a[i]);
+        }
+}
+
+function defaultCells() {
+        addCell('0123456789');
+        addCell('0123456789ABCDEF');
+        addCell('😃🌵🚀🍉🐳');
+}
+
+function addCell(value) {
         const cell = $(CELL);
         cell[0].ondragstart = onDragStart;
         cell[0].ondragend = resetDeleteArea;
+        cell.attr('value', value);
         btnAdd.before(cell);
+        cell.on('input', function(event) { saveCells(event, $(this).index()); });
+        saveCells();
         return cell;
+}
+
+function saveCells(event, index) {
+        if (typeof(Storage) === "undefined") {
+                return ;
+        }
+        if (index !== undefined) {
+                --index;
+        }
+        let array = [];
+        bases.children('input').map(function(i, elem) {
+                let value = (i === index) ? event.target.value : elem.getAttribute('value');
+                array.push(value);
+        });
+        if (array.length === 0) {
+                window.localStorage.removeItem('bases');
+                return ;
+        }
+        window.localStorage.setItem('bases', JSON.stringify(array));
 }
 
 function deleteCell(event) {
         event.preventDefault();
         const i = event.dataTransfer.getData('index/plain');
         $(bases).find(':eq('+i+')').remove();
+        saveCells();
 }
 
 function onDragStart(event) {
