@@ -32,10 +32,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		if number := values.Get("number"); number != "" {
 			data["Number"] = number
 		}
-		if inBase := values.Get("inbase"); inBase != "" {
+		if inBase := values.Get("inBase"); inBase != "" {
 			data["InBase"] = inBase
 		}
-		if toBase := values.Get("tobase"); toBase != "" {
+		if toBase := values.Get("toBase"); toBase != "" {
 			data["ToBase"] = toBase
 		}
 		if errorInBase := values.Get("einbase"); errorInBase != "" {
@@ -60,8 +60,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 
 		number := r.PostFormValue("number")
-		inBase := r.PostFormValue("inbase")
-		toBase := r.PostFormValue("tobase")
+		inBase := r.PostFormValue("inBase")
+		toBase := r.PostFormValue("toBase")
 
 		values := url.Values{}
 
@@ -69,10 +69,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			values.Add("number", number)
 		}
 		if inBase != "" {
-			values.Add("inbase", inBase)
+			values.Add("inBase", inBase)
 		}
 		if toBase != "" {
-			values.Add("tobase", toBase)
+			values.Add("toBase", toBase)
 		}
 
 		if number != "" && inBase != "" && toBase != "" {
