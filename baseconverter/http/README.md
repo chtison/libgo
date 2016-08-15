@@ -5,4 +5,4 @@
 
 Package http is an HTTP application for the package [baseconverter](..).
 
-## This application is hosted on [AppEngine](http://base-converter-1382.appspot.com) (Google Cloud).
+## This application is hosted on [AppEngine](https://base-converter-1382.appspot.com) (Google Cloud).
