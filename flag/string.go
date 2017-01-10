@@ -19,8 +19,11 @@ func (str *String) Value() string {
 	return str.value
 }
 
-// ParseValue ...
-func (str *String) ParseValue(value string) error {
-	str.value = value
+// Parse ...
+func (str *String) Parse(value *string) error {
+	if value == nil {
+		return str.errFlagNeedsValue()
+	}
+	str.value = *value
 	return nil
 }

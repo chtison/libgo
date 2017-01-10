@@ -6,7 +6,7 @@ import "strings"
 type Flag interface {
 	Name() (shortName, longName string)
 	Usage() string
-	ParseValue(value string) error
+	Parse(value *string) error
 }
 
 // flag ...
@@ -48,22 +48,29 @@ func (flag *flag) SetUsage(usage string) {
 	flag.usage = usage
 }
 
-// Set ...
-type Set struct {
+func (flag *flag) errFlagNeedsValue() ErrFlagNeedsValue {
+	if flag.longName != "" {
+		return ErrFlagNeedsValue("--" + flag.longName)
+	}
+	return ErrFlagNeedsValue("-" + flag.shortName)
+}
+
+// FlagSet ...
+type FlagSet struct {
 	flags []Flag
 }
 
-// NewSet ...
-func NewSet() *Set {
-	return &Set{
+// NewFlagSet ...
+func NewFlagSet() *FlagSet {
+	return &FlagSet{
 		flags: make([]Flag, 0, 1),
 	}
 }
 
-func (set *Set) find(shortName, longName string) (index int, flag Flag) {
+func (set *FlagSet) find(shortName, longName string) (index int, flag Flag) {
 	for index, flag = range set.flags {
 		shortFlagName, longFlagName := flag.Name()
-		if shortName != "" && shortName == shortFlagName || longName != "" && longName == longFlagName {
+		if (shortName == "" || shortName == shortFlagName) && (longName == "" || longName == longFlagName) {
 			return index, flag
 		}
 	}
@@ -71,25 +78,21 @@ func (set *Set) find(shortName, longName string) (index int, flag Flag) {
 }
 
 // Find ...
-func (set *Set) Find(shortName, longName string) Flag {
+func (set *FlagSet) Find(shortName, longName string) Flag {
 	_, flag := set.find(shortName, longName)
 	return flag
 }
 
-func (set *Set) remove(atIndex int) {
-	set.flags = append(set.flags[:atIndex], set.flags[atIndex+1:]...)
-}
-
 // Remove ...
-func (set *Set) Remove(shortName, longName string) {
+func (set *FlagSet) Remove(shortName, longName string) {
 	index, flag := set.find(shortName, longName)
 	if flag != nil {
-		set.remove(index)
+		set.flags = append(set.flags[:index], set.flags[index+1:]...)
 	}
 }
 
 // Add ...
-func (set *Set) Add(flag Flag) {
+func (set *FlagSet) Add(flag Flag) {
 	set.Remove(flag.Name())
 	set.flags = append(set.flags, flag)
 }

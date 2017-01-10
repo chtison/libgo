@@ -84,3 +84,67 @@ func testFlagUsage(t *testing.T, usage string) {
 		t.Errorf(`flag.Usage() != "%s"`, usage)
 	}
 }
+
+func TestFlagErrFlagNeedsValue(t *testing.T) {
+	testFlagErrFlagNeedsValue(t, "", "long", "--long")
+	testFlagErrFlagNeedsValue(t, "l", "", "-l")
+	testFlagErrFlagNeedsValue(t, "l", "long", "--long")
+}
+
+func testFlagErrFlagNeedsValue(t *testing.T, shortName, longName, expected string) {
+	flag := newFlag(shortName, longName)
+	if strings.HasSuffix(flag.errFlagNeedsValue().Error(), expected) == false {
+		t.Errorf(`newFlag("l", "long").errFlagNeedsValue().Error() == "%s" but expected is "%s"`, flag.errFlagNeedsValue().Error(), expected)
+	}
+}
+
+func TestFlagSetFind(t *testing.T) {
+	set := NewFlagSet()
+	set.Add(NewString("n", "name", ""))
+	set.Add(NewString("i", "interface", "bridge"))
+	set.Add(NewString("u", "user", "root"))
+
+	testFlagSetFind(t, set, "n", "", 0)
+	testFlagSetFind(t, set, "n", "name", 0)
+	testFlagSetFind(t, set, "", "name", 0)
+	testFlagSetFind(t, set, "u", "user", 2)
+	testFlagSetFind(t, set, "", "user", 2)
+	testFlagSetFind(t, set, "u", "", 2)
+
+	s, l := set.Find("n", "name").Name()
+	if s != "n" || l != "name" {
+		t.Errorf(`set.Find("%s", "%s").Name() -> ("%s", "%s") but expeted is ("%s", "%s")`,
+			"n", "name", s, l, "n", "name")
+	}
+}
+
+func testFlagSetFind(t *testing.T, set *FlagSet, shortName, longName string, expectedIndex int) {
+	index, flag := set.find(shortName, longName)
+	if index != expectedIndex {
+		t.Errorf(`set.find("%s", "%s") returns index %d but expected is %d`, shortName, longName, index, expectedIndex)
+	}
+	s, l := flag.Name()
+	if s != shortName && l != longName {
+		t.Errorf(`_, f := set.find("%s", "%s"); f.Name() -> ("%s", "%s") but expeted is ("%s", "%s")`,
+			shortName, longName, s, l, shortName, longName)
+	}
+}
+
+func TestFlagSetRemove(t *testing.T) {
+	set := NewFlagSet()
+	set.Add(NewString("n", "name", ""))
+	set.Add(NewString("i", "interface", "bridge"))
+	set.Add(NewString("u", "user", "root"))
+
+	testFlagSetRemove(t, set, "i", "interface")
+	testFlagSetRemove(t, set, "n", "name")
+	testFlagSetRemove(t, set, "u", "user")
+}
+
+func testFlagSetRemove(t *testing.T, set *FlagSet, shortName, longName string) {
+	set.Remove("i", "")
+	if set.Find("i", "interface") != nil {
+		s, l := set.Find("i", "interface").Name()
+		t.Errorf(`set.Find("i", "interface") -> flag.Name() -> ("%s", "%s") but should have returned nil`, s, l)
+	}
+}

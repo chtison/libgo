@@ -1,6 +1,7 @@
 package flag
 
 import (
+	"fmt"
 	"os"
 	"strings"
 )
@@ -10,15 +11,20 @@ type Command struct {
 	name  string
 	usage string
 
-	localFlags  *Set
-	globalFlags *Set
+	parent   *Command
+	children *CommandSet
+
+	Function    func(command *Command, args []string) error
+	LocalFlags  *FlagSet
+	GlobalFlags *FlagSet
 }
 
 // NewCommand ...
-func NewCommand(name string, function func(command *Command, args []string) error) *Command {
+func NewCommand(name string) *Command {
 	command := &Command{
-		localFlags:  NewSet(),
-		globalFlags: NewSet(),
+		children:    NewCommandSet(),
+		LocalFlags:  NewFlagSet(),
+		GlobalFlags: NewFlagSet(),
 	}
 	command.SetName(name)
 	return command
@@ -47,42 +53,163 @@ func (command *Command) SetUsage(usage string) {
 	command.usage = usage
 }
 
-// AddLocalFlag ...
-func (command *Command) AddLocalFlag(flag Flag) {
-	command.localFlags.Add(flag)
+// FindFlag ...
+func (command *Command) FindFlag(shortName, longName string) Flag {
+	if flag := command.LocalFlags.Find(shortName, longName); flag != nil {
+		return flag
+	}
+	for command != nil {
+		if flag := command.GlobalFlags.Find(shortName, longName); flag != nil {
+			return flag
+		}
+		command = command.parent
+	}
+	return nil
 }
 
-// AddGlobalFlag ...
-func (command *Command) AddGlobalFlag(flag Flag) {
-	command.globalFlags.Add(flag)
+// FindCommmand ...
+func (command *Command) FindCommmand(name string) *Command {
+	return command.children.Find(name)
 }
 
 // Execute ...
 func (command *Command) Execute(commandLine []string) error {
-	for _, arg := range commandLine {
+	for i := 0; i < len(commandLine); i++ {
+		arg := commandLine[i]
 		if strings.HasPrefix(arg, "--") {
 			if len(arg) > len("--") {
-				command.localFlags.Find("", strings.TrimPrefix(arg, "--"))
+				arg = strings.TrimPrefix(arg, "--")
+				a := strings.SplitN(arg, "=", 2)
+				var value *string
+				if len(a) == 2 {
+					value = &a[1]
+				}
+				if flag := command.FindFlag("", a[0]); flag != nil {
+					if err := flag.Parse(value); err != nil {
+						if _, ok := err.(ErrFlagNeedsValue); ok {
+							if (i + 1) < len(commandLine) {
+								if err = flag.Parse(&commandLine[i+1]); err != nil {
+									return err
+								}
+								i++
+							}
+						} else {
+							return err
+						}
+					}
+				} else {
+					return ErrFlagNotFound("--" + arg)
+				}
 			} else {
-
+				if command.Function != nil {
+					return command.Function(command, commandLine[i+1:])
+				}
+				return nil
 			}
+		} else if strings.HasPrefix(arg, "-") && len(arg) > len("-") {
+			flags := []rune(arg)
+			for j := 1; i < len(flags); j++ {
+				c := flags[j]
+				if flag := command.FindFlag(string(c), ""); flag != nil {
+					if err := flag.Parse(nil); err != nil {
+						if _, ok := err.(ErrFlagNeedsValue); ok {
+							if (i+1) < len(commandLine) && (j+1) == len(flags) {
+								if err = flag.Parse(&commandLine[i+1]); err != nil {
+									return err
+								}
+								i++
+							} else {
+								return ErrFlagNeedsValue("-" + string(c))
+							}
+						} else {
+							return err
+						}
+					}
+				} else {
+					return ErrFlagNotFound("-" + string(c))
+				}
+			}
+		} else if subCommand := command.FindCommmand(arg); subCommand != nil {
+			command = subCommand
+		} else if command.Function != nil {
+			return command.Function(command, commandLine[i+1:])
+		} else {
+			return nil
+		}
+	}
+	if command.Function != nil {
+		return command.Function(command, []string{})
+	}
+	return nil
+}
+
+// AddSubCommand ...
+func (command *Command) AddSubCommand(other *Command) {
+	command.children.Add(other)
+}
+
+// ErrFlagNotFound ...
+type ErrFlagNotFound string
+
+func (err ErrFlagNotFound) Error() string {
+	return fmt.Sprintf("flag provided but not defined: %s", string(err))
+}
+
+// ErrFlagNeedsValue ...
+type ErrFlagNeedsValue string
+
+func (err ErrFlagNeedsValue) Error() string {
+	return fmt.Sprintf("flag needs an argument: %s", string(err))
+}
+
+// CommandSet ...
+type CommandSet struct {
+	commands []*Command
+}
+
+// NewCommandSet ...
+func NewCommandSet() *CommandSet {
+	return &CommandSet{
+		commands: make([]*Command, 0, 1),
+	}
+}
+
+// Find ...
+func (set *CommandSet) Find(name string) *Command {
+	for _, command := range set.commands {
+		if command.name == name {
+			return command
 		}
 	}
 	return nil
 }
 
+func (set *CommandSet) find(command *Command) (index int) {
+	for index, command2 := range set.commands {
+		if command == command2 {
+			return index
+		}
+	}
+	return -1
+}
+
+// Add ...
+func (set *CommandSet) Add(command *Command) {
+	if set.find(command) > -1 {
+		return
+	}
+	set.commands = append(set.commands, command)
+}
+
+// Remove ...
+func (set *CommandSet) Remove(command *Command) {
+	if i := set.find(command); i > -1 {
+		set.commands = append(set.commands[:i], set.commands[i+1:]...)
+	}
+}
+
 // DefaultCommand ...
 var DefaultCommand = NewCommand(os.Args[0])
-
-// AddLocalFlag ...
-func AddLocalFlag(flag Flag) {
-	DefaultCommand.AddLocalFlag(flag)
-}
-
-// AddGlobalFlag ...
-func AddGlobalFlag(flag Flag) {
-	DefaultCommand.AddLocalFlag(flag)
-}
 
 // Execute ...
 func Execute() error {
