@@ -1,6 +1,7 @@
 package flag
 
 import (
+	"errors"
 	"strings"
 	"testing"
 	"time"
@@ -299,4 +300,49 @@ func TestErrFlagNotFound(t *testing.T) {
 	if !strings.HasSuffix(ErrFlagNotFound("--name").Error(), "--name") {
 		t.Error(`strings.HasSuffix(ErrFlagNotFound("--name").Error(), "--name") == false`)
 	}
+}
+
+func TestErrFlagInvalidSyntax(t *testing.T) {
+	err := NewErrFlagInvalidSyntax("wrong", errors.New("bad syntax"))
+	err.Flag = "--name"
+	if err.Error() == "" {
+		t.Fatal(`bad error value`)
+	}
+}
+
+func TestCommandExecuteErrFlagInvalidSyntax(t *testing.T) {
+	cmd := NewCommand("test")
+	cmd.LocalFlags.Add(NewBool("", "verbose", false))
+	err := cmd.Execute([]string{"--verbose=wrong"})
+	if err == nil {
+		t.Fatal(`cmd.Execute([]string{"--verbose=wrong"}) -> nil but error of type *ErrFlagInvalidSyntax is expected`)
+	}
+	if _, ok := err.(*ErrFlagInvalidSyntax); !ok {
+		t.Errorf(`cmd.Execute([]string{"--verbose=wrong"}) -> error("%s") but is not of type *ErrFlagInvalidSyntax`, err)
+	}
+
+	s := NewString("h", "help", "")
+	s.Validator = func(str *String, value string) (string, error) {
+		if value != "nice" {
+			return "", errors.New("bad value")
+		}
+		return value, nil
+	}
+	cmd.LocalFlags.Add(s)
+	err = cmd.Execute([]string{"-h", "not nice"})
+	if err == nil {
+		t.Fatal(`cmd.Execute([]string{"-h", "not nice"}) -> nil but error of type *ErrFlagInvalidSyntax is expected`)
+	}
+	if _, ok := err.(*ErrFlagInvalidSyntax); !ok {
+		t.Errorf(`cmd.Execute([]string{"-h", "not nice"}) -> error("%s") but is not of type *ErrFlagInvalidSyntax`, err)
+	}
+
+	err = cmd.Execute([]string{"--help", "not nice"})
+	if err == nil {
+		t.Fatal(`cmd.Execute([]string{"-h", "not nice"}) -> nil but error of type *ErrFlagInvalidSyntax is expected`)
+	}
+	if _, ok := err.(*ErrFlagInvalidSyntax); !ok {
+		t.Errorf(`cmd.Execute([]string{"-h", "not nice"}) -> error("%s") but is not of type *ErrFlagInvalidSyntax`, err)
+	}
+
 }

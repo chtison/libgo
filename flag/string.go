@@ -3,7 +3,8 @@ package flag
 // String ...
 type String struct {
 	*flag
-	value string
+	value     string
+	Validator func(str *String, value string) (newValue string, err error)
 }
 
 // NewString ...
@@ -23,6 +24,14 @@ func (str *String) Value() string {
 func (str *String) Parse(value *string) error {
 	if value == nil {
 		return str.errFlagNeedsValue()
+	}
+	if str.Validator != nil {
+		newValue, err := str.Validator(str, *value)
+		if err != nil {
+			return NewErrFlagInvalidSyntax(*value, err)
+		}
+		str.value = newValue
+		return nil
 	}
 	str.value = *value
 	return nil

@@ -116,14 +116,14 @@ func (command *Command) Execute(commandLine []string) error {
 						if _, ok := err.(ErrFlagNeedsValue); ok {
 							if (i + 1) < len(commandLine) {
 								if err = flag.Parse(&commandLine[i+1]); err != nil {
-									return err
+									return checkError(err, "--"+a[0])
 								}
 								i++
 							} else {
 								return err
 							}
 						} else {
-							return err
+							return checkError(err, "--"+a[0])
 						}
 					}
 				} else {
@@ -144,14 +144,14 @@ func (command *Command) Execute(commandLine []string) error {
 						if _, ok := err.(ErrFlagNeedsValue); ok {
 							if (i+1) < len(commandLine) && (j+1) == len(flags) {
 								if err = flag.Parse(&commandLine[i+1]); err != nil {
-									return err
+									return checkError(err, "="+string(c))
 								}
 								i++
 							} else {
 								return err
 							}
 						} else {
-							return err
+							return checkError(err, "-"+string(c))
 						}
 					}
 				} else {
@@ -170,6 +170,14 @@ func (command *Command) Execute(commandLine []string) error {
 	return nil
 }
 
+func checkError(err error, flag string) error {
+	if err, ok := err.(*ErrFlagInvalidSyntax); ok {
+		err.Flag = flag
+		return err
+	}
+	return err
+}
+
 // ErrFlagNotFound ...
 type ErrFlagNotFound string
 
@@ -182,6 +190,26 @@ type ErrFlagNeedsValue string
 
 func (err ErrFlagNeedsValue) Error() string {
 	return fmt.Sprintf("flag needs an argument: %s", string(err))
+}
+
+// ErrFlagInvalidSyntax ...
+type ErrFlagInvalidSyntax struct {
+	Err   error
+	Value string
+	Flag  string
+}
+
+// NewErrFlagInvalidSyntax ...
+func NewErrFlagInvalidSyntax(value string, err error) *ErrFlagInvalidSyntax {
+	return &ErrFlagInvalidSyntax{
+		Err:   err,
+		Value: value,
+	}
+}
+
+func (err *ErrFlagInvalidSyntax) Error() string {
+	return fmt.Sprintf(`invalid argument "%s" for %s flag: %s`,
+		err.Value, err.Flag, err.Err.Error())
 }
 
 // CommandSet ...

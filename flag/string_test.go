@@ -1,6 +1,9 @@
 package flag
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestStringValue(t *testing.T) {
 	testStringParse(t, "")
@@ -32,5 +35,30 @@ func TestStringParseNil(t *testing.T) {
 	}
 	if _, ok := err.(ErrFlagNeedsValue); !ok {
 		t.Errorf(`NewString("", "error", "asd").Parse(nil) -> error("%s") but should return error of type ErrFlagNeedsValue`, err)
+	}
+}
+
+func TestStringValidator(t *testing.T) {
+	s := NewString("", "1", "")
+	s.Validator = func(str *String, value string) (newValue string, err error) {
+		switch value {
+		case "1":
+			return "one", nil
+		case "2":
+			return "two", nil
+		}
+		return "", errors.New("bad value")
+	}
+	arg := "1"
+	if err := s.Parse(&arg); err != nil {
+		t.Fatalf(`s.Parse(&"%s") -> error("%s")`, arg, err)
+	}
+	if s.Value() != "one" {
+		t.Fatalf(`s.Value() == "%s" but "one" is expected`, s.Value())
+	}
+
+	arg = "wrong"
+	if err := s.Parse(&arg); err == nil {
+		t.Fatalf(`s.Parse(&"%s") -> nil but error of type ErrFlagInvalidSyntax is expected`, arg)
 	}
 }
