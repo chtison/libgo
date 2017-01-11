@@ -85,14 +85,25 @@ func (set *FlagSet) Find(shortName, longName string) Flag {
 
 // Remove ...
 func (set *FlagSet) Remove(shortName, longName string) {
-	index, flag := set.find(shortName, longName)
-	if flag != nil {
-		set.flags = append(set.flags[:index], set.flags[index+1:]...)
+	if shortName != "" {
+		index, flag := set.find(shortName, "")
+		if flag != nil {
+			set.flags = append(set.flags[:index], set.flags[index+1:]...)
+		}
 	}
+	if longName != "" {
+		index, flag := set.find("", longName)
+		if flag != nil {
+			set.flags = append(set.flags[:index], set.flags[index+1:]...)
+		}
+	}
+
 }
 
 // Add ...
-func (set *FlagSet) Add(flag Flag) {
-	set.Remove(flag.Name())
-	set.flags = append(set.flags, flag)
+func (set *FlagSet) Add(flags ...Flag) {
+	for _, flag := range flags {
+		set.Remove(flag.Name())
+		set.flags = append(set.flags, flag)
+	}
 }

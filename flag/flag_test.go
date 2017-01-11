@@ -138,13 +138,13 @@ func TestFlagSetRemove(t *testing.T) {
 
 	testFlagSetRemove(t, set, "i", "interface")
 	testFlagSetRemove(t, set, "n", "name")
-	testFlagSetRemove(t, set, "u", "user")
+	set.Remove("u", "")
 }
 
 func testFlagSetRemove(t *testing.T, set *FlagSet, shortName, longName string) {
-	set.Remove("i", "")
-	if set.Find("i", "interface") != nil {
-		s, l := set.Find("i", "interface").Name()
-		t.Errorf(`set.Find("i", "interface") -> flag.Name() -> ("%s", "%s") but should have returned nil`, s, l)
+	set.Remove("", longName)
+	if set.Find(shortName, longName) != nil {
+		s, l := set.Find(shortName, longName).Name()
+		t.Errorf(`set.Find("%s", "%s") -> flag.Name() -> ("%s", "%s") but should have returned nil`, shortName, longName, s, l)
 	}
 }

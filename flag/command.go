@@ -73,21 +73,25 @@ func (command *Command) FindFlag(shortName, longName string) Flag {
 }
 
 // RemoveSubCommand ...
-func (command *Command) RemoveSubCommand(other *Command) {
-	if other.parent != command {
-		return
+func (command *Command) RemoveSubCommand(commands ...*Command) {
+	for _, cmd := range commands {
+		if cmd.parent != command {
+			return
+		}
+		command.subCommands.Remove(cmd)
+		cmd.parent = nil
 	}
-	command.subCommands.Remove(other)
-	other.parent = nil
 }
 
 // AddSubCommand ...
-func (command *Command) AddSubCommand(other *Command) {
-	if other.parent != nil {
-		other.parent.RemoveSubCommand(other)
+func (command *Command) AddSubCommand(commands ...*Command) {
+	for _, cmd := range commands {
+		if cmd.parent != nil {
+			cmd.parent.RemoveSubCommand(cmd)
+		}
+		command.subCommands.Add(cmd)
+		cmd.parent = command
 	}
-	command.subCommands.Add(other)
-	other.parent = command
 }
 
 // FindSubCommmand ...
@@ -133,7 +137,7 @@ func (command *Command) Execute(commandLine []string) error {
 			}
 		} else if strings.HasPrefix(arg, "-") && len(arg) > len("-") {
 			flags := []rune(arg)
-			for j := 1; i < len(flags); j++ {
+			for j := 1; j < len(flags); j++ {
 				c := flags[j]
 				if flag := command.FindFlag(string(c), ""); flag != nil {
 					if err := flag.Parse(nil); err != nil {
@@ -144,7 +148,7 @@ func (command *Command) Execute(commandLine []string) error {
 								}
 								i++
 							} else {
-								return ErrFlagNeedsValue("-" + string(c))
+								return err
 							}
 						} else {
 							return err
@@ -156,10 +160,8 @@ func (command *Command) Execute(commandLine []string) error {
 			}
 		} else if subCommand := command.FindSubCommmand(arg); subCommand != nil {
 			command = subCommand
-		} else if command.Function != nil {
-			return command.Function(command, commandLine[i+1:])
 		} else {
-			return nil
+			break
 		}
 	}
 	if command.Function != nil {
@@ -214,17 +216,21 @@ func (set *CommandSet) find(command *Command) (index int) {
 }
 
 // Add ...
-func (set *CommandSet) Add(command *Command) {
-	if set.find(command) > -1 {
-		return
+func (set *CommandSet) Add(commands ...*Command) {
+	for _, command := range commands {
+		if set.find(command) > -1 {
+			return
+		}
+		set.commands = append(set.commands, command)
 	}
-	set.commands = append(set.commands, command)
 }
 
 // Remove ...
-func (set *CommandSet) Remove(command *Command) {
-	if i := set.find(command); i > -1 {
-		set.commands = append(set.commands[:i], set.commands[i+1:]...)
+func (set *CommandSet) Remove(commands ...*Command) {
+	for _, command := range commands {
+		if i := set.find(command); i > -1 {
+			set.commands = append(set.commands[:i], set.commands[i+1:]...)
+		}
 	}
 }
 
