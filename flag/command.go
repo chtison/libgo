@@ -11,8 +11,8 @@ type Command struct {
 	name  string
 	usage string
 
-	parent   *Command
-	children *CommandSet
+	parent      *Command
+	subCommands *CommandSet
 
 	Function    func(command *Command, args []string) error
 	LocalFlags  *FlagSet
@@ -22,7 +22,7 @@ type Command struct {
 // NewCommand ...
 func NewCommand(name string) *Command {
 	command := &Command{
-		children:    NewCommandSet(),
+		subCommands: NewCommandSet(),
 		LocalFlags:  NewFlagSet(),
 		GlobalFlags: NewFlagSet(),
 	}
@@ -53,6 +53,11 @@ func (command *Command) SetUsage(usage string) {
 	command.usage = usage
 }
 
+// Parent ...
+func (command *Command) Parent() *Command {
+	return command.parent
+}
+
 // FindFlag ...
 func (command *Command) FindFlag(shortName, longName string) Flag {
 	if flag := command.LocalFlags.Find(shortName, longName); flag != nil {
@@ -67,9 +72,27 @@ func (command *Command) FindFlag(shortName, longName string) Flag {
 	return nil
 }
 
-// FindCommmand ...
-func (command *Command) FindCommmand(name string) *Command {
-	return command.children.Find(name)
+// RemoveSubCommand ...
+func (command *Command) RemoveSubCommand(other *Command) {
+	if other.parent != command {
+		return
+	}
+	command.subCommands.Remove(other)
+	other.parent = nil
+}
+
+// AddSubCommand ...
+func (command *Command) AddSubCommand(other *Command) {
+	if other.parent != nil {
+		other.parent.RemoveSubCommand(other)
+	}
+	command.subCommands.Add(other)
+	other.parent = command
+}
+
+// FindSubCommmand ...
+func (command *Command) FindSubCommmand(name string) *Command {
+	return command.subCommands.Find(name)
 }
 
 // Execute ...
@@ -92,6 +115,8 @@ func (command *Command) Execute(commandLine []string) error {
 									return err
 								}
 								i++
+							} else {
+								return err
 							}
 						} else {
 							return err
@@ -129,7 +154,7 @@ func (command *Command) Execute(commandLine []string) error {
 					return ErrFlagNotFound("-" + string(c))
 				}
 			}
-		} else if subCommand := command.FindCommmand(arg); subCommand != nil {
+		} else if subCommand := command.FindSubCommmand(arg); subCommand != nil {
 			command = subCommand
 		} else if command.Function != nil {
 			return command.Function(command, commandLine[i+1:])
@@ -138,14 +163,9 @@ func (command *Command) Execute(commandLine []string) error {
 		}
 	}
 	if command.Function != nil {
-		return command.Function(command, []string{})
+		return command.Function(command, commandLine[len(commandLine):])
 	}
 	return nil
-}
-
-// AddSubCommand ...
-func (command *Command) AddSubCommand(other *Command) {
-	command.children.Add(other)
 }
 
 // ErrFlagNotFound ...
