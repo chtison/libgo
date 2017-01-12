@@ -29,7 +29,7 @@ func (b *Bool) Parse(value *string) error {
 	}
 	newValue, err := strconv.ParseBool(*value)
 	if err != nil {
-		return NewErrFlagInvalidSyntax(*value, err)
+		return newErrFlagInvalidSyntax(*value, err)
 	}
 	b.value = newValue
 	return nil

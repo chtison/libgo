@@ -303,8 +303,8 @@ func TestErrFlagNotFound(t *testing.T) {
 }
 
 func TestErrFlagInvalidSyntax(t *testing.T) {
-	err := NewErrFlagInvalidSyntax("wrong", errors.New("bad syntax"))
-	err.Flag = "--name"
+	err := newErrFlagInvalidSyntax("wrong", errors.New("bad syntax"))
+	err.flag = "--name"
 	if err.Error() == "" {
 		t.Fatal(`bad error value`)
 	}

@@ -172,7 +172,7 @@ func (command *Command) Execute(commandLine []string) error {
 
 func checkError(err error, flag string) error {
 	if err, ok := err.(*ErrFlagInvalidSyntax); ok {
-		err.Flag = flag
+		err.flag = flag
 		return err
 	}
 	return err
@@ -194,22 +194,22 @@ func (err ErrFlagNeedsValue) Error() string {
 
 // ErrFlagInvalidSyntax ...
 type ErrFlagInvalidSyntax struct {
-	Err   error
-	Value string
-	Flag  string
+	err   error
+	value string
+	flag  string
 }
 
 // NewErrFlagInvalidSyntax ...
-func NewErrFlagInvalidSyntax(value string, err error) *ErrFlagInvalidSyntax {
+func newErrFlagInvalidSyntax(value string, err error) *ErrFlagInvalidSyntax {
 	return &ErrFlagInvalidSyntax{
-		Err:   err,
-		Value: value,
+		err:   err,
+		value: value,
 	}
 }
 
 func (err *ErrFlagInvalidSyntax) Error() string {
 	return fmt.Sprintf(`invalid argument "%s" for %s flag: %s`,
-		err.Value, err.Flag, err.Err.Error())
+		err.value, err.flag, err.err.Error())
 }
 
 // CommandSet ...

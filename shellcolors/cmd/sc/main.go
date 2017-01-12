@@ -190,7 +190,7 @@ const usage = `usage: sc {cmd}+
        sc list
        sc list-color
 
-Shellcolors lets you modify style of you outputed text in a terminal
+Shellcolors lets you modify style of you outputted text in a terminal
 like the boldness or the background color.
 However, some commands might not be supported by your terminal.
 

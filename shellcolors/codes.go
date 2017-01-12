@@ -5,9 +5,9 @@ type CodeSGR uint8
 
 // Start and end of an SGR code: "\033[...;...;...;m".
 const (
-	codeSGR_start     = "\033["
-	codeSGR_separator = ";"
-	codeSGR_end       = "m"
+	codeSgrStart     = "\033["
+	codeSgrSeparator = ";"
+	codeSgrEnd       = "m"
 )
 
 // First range of codeSGR

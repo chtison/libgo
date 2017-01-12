@@ -5,36 +5,42 @@ import (
 	"fmt"
 )
 
+// ShellColor ...
 type ShellColor struct {
 	codes []CodeSGR
 	// temporary storage for computed string in String() method
 	str *string
 }
 
+// New ...
 func New(codes ...CodeSGR) *ShellColor {
 	new := &ShellColor{}
 	new.Add(codes...)
 	return new
 }
 
+// NewWithColor ...
 func NewWithColor(color uint8, codes ...CodeSGR) *ShellColor {
 	new := New(codes...)
 	new.Color(color)
 	return new
 }
 
+// NewWithColorRGB ...
 func NewWithColorRGB(red, green, blue uint8, codes ...CodeSGR) *ShellColor {
 	new := New(codes...)
 	new.ColorRGB(red, green, blue)
 	return new
 }
 
+// NewWithBgColor ...
 func NewWithBgColor(color uint8, codes ...CodeSGR) *ShellColor {
 	new := New(codes...)
 	new.BgColor(color)
 	return new
 }
 
+// NewWithBgColorRGB ...
 func NewWithBgColorRGB(red, green, blue uint8, codes ...CodeSGR) *ShellColor {
 	new := New(codes...)
 	new.BgColorRGB(red, green, blue)
@@ -42,56 +48,61 @@ func NewWithBgColorRGB(red, green, blue uint8, codes ...CodeSGR) *ShellColor {
 }
 
 // Add adds SGR codes in order to the format string
-func (self *ShellColor) Add(codes ...CodeSGR) *ShellColor {
-	self.str = nil
+func (sc *ShellColor) Add(codes ...CodeSGR) *ShellColor {
+	sc.str = nil
 	for _, code := range codes {
-		self.codes = append(self.codes, code)
+		sc.codes = append(sc.codes, code)
 	}
-	return self
+	return sc
 }
 
-func (self *ShellColor) Color(color uint8) *ShellColor {
-	self.Add(CustomColor, CodeSGR(5), CodeSGR(color))
-	return self
+// Color ...
+func (sc *ShellColor) Color(color uint8) *ShellColor {
+	sc.Add(CustomColor, CodeSGR(5), CodeSGR(color))
+	return sc
 }
 
-func (self *ShellColor) ColorRGB(red, green, blue uint8) *ShellColor {
-	self.Add(CustomColor, CodeSGR(2),
+// ColorRGB ...
+func (sc *ShellColor) ColorRGB(red, green, blue uint8) *ShellColor {
+	sc.Add(CustomColor, CodeSGR(2),
 		CodeSGR(red), CodeSGR(green), CodeSGR(blue))
-	return self
+	return sc
 }
 
-func (self *ShellColor) BgColor(color uint8) *ShellColor {
-	self.Add(BgCustomColor, CodeSGR(5), CodeSGR(color))
-	return self
+// BgColor ...
+func (sc *ShellColor) BgColor(color uint8) *ShellColor {
+	sc.Add(BgCustomColor, CodeSGR(5), CodeSGR(color))
+	return sc
 }
 
-func (self *ShellColor) BgColorRGB(red, green, blue uint8) *ShellColor {
-	self.Add(BgCustomColor, CodeSGR(2),
+// BgColorRGB ...
+func (sc *ShellColor) BgColorRGB(red, green, blue uint8) *ShellColor {
+	sc.Add(BgCustomColor, CodeSGR(2),
 		CodeSGR(red), CodeSGR(green), CodeSGR(blue))
-	return self
+	return sc
 }
 
-func (self *ShellColor) String() string {
-	if len(self.codes) == 0 {
+// String ...
+func (sc *ShellColor) String() string {
+	if len(sc.codes) == 0 {
 		return ""
 	}
-	if self.str != nil {
-		return *self.str
+	if sc.str != nil {
+		return *sc.str
 	}
 	var buf bytes.Buffer
-	buf.WriteString(codeSGR_start)
+	buf.WriteString(codeSgrStart)
 	isFirst := true
-	for _, code := range self.codes {
+	for _, code := range sc.codes {
 		if isFirst {
 			buf.WriteString(fmt.Sprintf("%d", code))
 			isFirst = false
 		} else {
-			buf.WriteString(fmt.Sprintf("%s%d", codeSGR_separator, code))
+			buf.WriteString(fmt.Sprintf("%s%d", codeSgrSeparator, code))
 		}
 	}
-	buf.WriteString(codeSGR_end)
+	buf.WriteString(codeSgrEnd)
 	str := buf.String()
-	self.str = &str
+	sc.str = &str
 	return str
 }

@@ -28,7 +28,7 @@ func (str *String) Parse(value *string) error {
 	if str.Validator != nil {
 		newValue, err := str.Validator(str, *value)
 		if err != nil {
-			return NewErrFlagInvalidSyntax(*value, err)
+			return newErrFlagInvalidSyntax(*value, err)
 		}
 		str.value = newValue
 		return nil

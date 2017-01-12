@@ -4,7 +4,7 @@ Rendition (SGR).
 
 https://en.wikipedia.org/wiki/ANSI_escape_code#graphics
 
-Package shellcolors lets you modify style of you outputed text in a terminal
+Package shellcolors lets you modify style of you outputted text in a terminal
 like the boldness or the background color.
 However, some SGR codes might not be supported by your terminal.
 
