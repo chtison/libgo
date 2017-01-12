@@ -105,29 +105,8 @@ func (command *Command) Execute(commandLine []string) error {
 		arg := commandLine[i]
 		if strings.HasPrefix(arg, "--") {
 			if len(arg) > len("--") {
-				arg = strings.TrimPrefix(arg, "--")
-				a := strings.SplitN(arg, "=", 2)
-				var value *string
-				if len(a) == 2 {
-					value = &a[1]
-				}
-				if flag := command.FindFlag("", a[0]); flag != nil {
-					if err := flag.Parse(value); err != nil {
-						if _, ok := err.(ErrFlagNeedsValue); ok {
-							if (i + 1) < len(commandLine) {
-								if err = flag.Parse(&commandLine[i+1]); err != nil {
-									return checkError(err, "--"+a[0])
-								}
-								i++
-							} else {
-								return err
-							}
-						} else {
-							return checkError(err, "--"+a[0])
-						}
-					}
-				} else {
-					return ErrFlagNotFound("--" + arg)
+				if err := command.executeLongFlag(commandLine, arg, &i); err != nil {
+					return err
 				}
 			} else {
 				if command.Function != nil {
@@ -136,27 +115,8 @@ func (command *Command) Execute(commandLine []string) error {
 				return nil
 			}
 		} else if strings.HasPrefix(arg, "-") && len(arg) > len("-") {
-			flags := []rune(arg)
-			for j := 1; j < len(flags); j++ {
-				c := flags[j]
-				if flag := command.FindFlag(string(c), ""); flag != nil {
-					if err := flag.Parse(nil); err != nil {
-						if _, ok := err.(ErrFlagNeedsValue); ok {
-							if (i+1) < len(commandLine) && (j+1) == len(flags) {
-								if err = flag.Parse(&commandLine[i+1]); err != nil {
-									return checkError(err, "="+string(c))
-								}
-								i++
-							} else {
-								return err
-							}
-						} else {
-							return checkError(err, "-"+string(c))
-						}
-					}
-				} else {
-					return ErrFlagNotFound("-" + string(c))
-				}
+			if err := command.executeShortFlag(commandLine, arg, &i); err != nil {
+				return err
 			}
 		} else if subCommand := command.FindSubCommmand(arg); subCommand != nil {
 			command = subCommand
@@ -166,6 +126,60 @@ func (command *Command) Execute(commandLine []string) error {
 	}
 	if command.Function != nil {
 		return command.Function(command, commandLine[len(commandLine):])
+	}
+	return nil
+}
+
+func (command *Command) executeLongFlag(commandLine []string, arg string, i *int) error {
+	arg = strings.TrimPrefix(arg, "--")
+	a := strings.SplitN(arg, "=", 2)
+	var value *string
+	if len(a) == 2 {
+		value = &a[1]
+	}
+	if flag := command.FindFlag("", a[0]); flag != nil {
+		if err := flag.Parse(value); err != nil {
+			if _, ok := err.(ErrFlagNeedsValue); ok {
+				if (*i + 1) < len(commandLine) {
+					if err = flag.Parse(&commandLine[*i+1]); err != nil {
+						return checkError(err, "--"+a[0])
+					}
+					*i++
+				} else {
+					return err
+				}
+			} else {
+				return checkError(err, "--"+a[0])
+			}
+		}
+	} else {
+		return ErrFlagNotFound("--" + arg)
+	}
+	return nil
+}
+
+func (command *Command) executeShortFlag(commandLine []string, arg string, i *int) error {
+	flags := []rune(arg)
+	for j := 1; j < len(flags); j++ {
+		c := flags[j]
+		if flag := command.FindFlag(string(c), ""); flag != nil {
+			if err := flag.Parse(nil); err != nil {
+				if _, ok := err.(ErrFlagNeedsValue); ok {
+					if (*i+1) < len(commandLine) && (j+1) == len(flags) {
+						if err = flag.Parse(&commandLine[*i+1]); err != nil {
+							return checkError(err, "="+string(c))
+						}
+						*i++
+					} else {
+						return err
+					}
+				} else {
+					return checkError(err, "-"+string(c))
+				}
+			}
+		} else {
+			return ErrFlagNotFound("-" + string(c))
+		}
 	}
 	return nil
 }
