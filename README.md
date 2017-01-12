@@ -1,4 +1,4 @@
-![gopher golang](https://blog.golang.org/gopher/header.jpg "https://blog.golang.org/gopher/header.jpg")
+![gopher golang](libgo.png)
 
 # Golang package libgo
 
