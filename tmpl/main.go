@@ -11,7 +11,8 @@ import (
 
 func main() {
 	if len(os.Args) != 4 {
-		usage()
+		fmt.Printfln(`usage: %s TEMPLATE JSONFILE RESULT`, os.Args[0])
+		os.Exit(1)
 	}
 	tmpl, err := template.ParseFiles(os.Args[1])
 	if err != nil {
@@ -40,12 +41,4 @@ func main() {
 		os.Remove(os.Args[3])
 		os.Exit(1)
 	}
-}
-
-func usage() {
-	fmt.Printfln(`usage: %s TEMPLATE JSONFILE RESULT
-TEMPLATE: the template processed
-DATAFILE: a JSON formatted file serving as environment for template
-RESULT  : result of the processed template`, os.Args[0])
-	os.Exit(1)
 }
