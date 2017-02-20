@@ -1,20 +1,21 @@
 package main
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"os"
 	"text/template"
 
 	"github.com/chtison/libgo/fmt"
+	"gopkg.in/yaml.v2"
 )
 
 func main() {
-	if len(os.Args) != 4 {
-		fmt.Printfln(`usage: %s TEMPLATE JSONFILE RESULT`, os.Args[0])
+	if len(os.Args) < 4 {
+		fmt.Printfln(`usage: %s TEMPLATE YAMLFILE RESULT [TEMPLATE, [...]]`, os.Args[0])
 		os.Exit(1)
 	}
-	tmpl, err := template.ParseFiles(os.Args[1])
+	funcMap := template.FuncMap{}
+	tmpl, err := template.New(os.Args[1]).Funcs(funcMap).ParseFiles(os.Args[1])
 	if err != nil {
 		fmt.Fprintfln(os.Stderr, `error: %s: %s`, os.Args[1], err)
 		os.Exit(1)
@@ -25,7 +26,7 @@ func main() {
 		os.Exit(1)
 	}
 	var m map[string]interface{}
-	if err = json.Unmarshal(data, &m); err != nil {
+	if err = yaml.Unmarshal(data, &m); err != nil {
 		fmt.Fprintfln(os.Stderr, `error: %s: %s`, os.Args[2], err)
 		os.Exit(1)
 	}
@@ -34,11 +35,19 @@ func main() {
 		fmt.Fprintfln(os.Stderr, `error: %s: %s`, os.Args[3], err)
 		os.Exit(1)
 	}
-	defer outfile.Close()
+	if len(os.Args) > 4 {
+		if _, err = tmpl.ParseFiles(os.Args[4:]...); err != nil {
+			fmt.Fprintfln(os.Stderr, `error: %s`, err)
+			outfile.Close()
+			os.Remove(os.Args[3])
+			os.Exit(1)
+		}
+	}
 	if tmpl.Execute(outfile, m); err != nil {
 		fmt.Fprintfln(os.Stderr, `error: processing template failed: %s`, err)
 		outfile.Close()
 		os.Remove(os.Args[3])
 		os.Exit(1)
 	}
+	outfile.Close()
 }
