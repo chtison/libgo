@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"text/template"
+	"time"
 
 	"github.com/chtison/libgo/fmt"
 	"gopkg.in/yaml.v2"
@@ -18,6 +19,7 @@ func main() {
 	funcMap := template.FuncMap{
 		"dictStringToInterface":    dictStringToInterface,
 		"dictInterfaceToInterface": dictInterfaceToInterface,
+		"Now": now,
 	}
 	tmpl, err := template.New(os.Args[3]).Funcs(funcMap).ParseFiles(os.Args[3:]...)
 	if err != nil {
@@ -66,4 +68,8 @@ func dictInterfaceToInterface(d map[interface{}]interface{}, values ...interface
 		d[values[i]] = values[i+1]
 	}
 	return d
+}
+
+func now() string {
+	return time.Now().String()
 }
