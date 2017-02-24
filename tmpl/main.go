@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 	"time"
 
@@ -19,7 +20,8 @@ func main() {
 	funcMap := template.FuncMap{
 		"dictStringToInterface":    dictStringToInterface,
 		"dictInterfaceToInterface": dictInterfaceToInterface,
-		"Now": now,
+		"time":    NewTime,
+		"strings": NewString,
 	}
 	tmpl, err := template.New(os.Args[3]).Funcs(funcMap).ParseFiles(os.Args[3:]...)
 	if err != nil {
@@ -70,6 +72,26 @@ func dictInterfaceToInterface(d map[interface{}]interface{}, values ...interface
 	return d
 }
 
-func now() string {
+// Time ...
+type Time struct{}
+
+// NewTime ...
+func NewTime() *Time {
+	return &Time{}
+}
+
+// Now ...
+func (t *Time) Now() string {
 	return time.Now().String()
+}
+
+type String struct{}
+
+func NewString() *String {
+	return &String{}
+}
+
+// Replace ...
+func (str *String) Replace(s, old, new string, n int) string {
+	return strings.Replace(s, old, new, n)
 }
