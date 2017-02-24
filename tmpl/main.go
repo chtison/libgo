@@ -85,8 +85,10 @@ func (t *Time) Now() string {
 	return time.Now().String()
 }
 
+// String ...
 type String struct{}
 
+// NewString ...
 func NewString() *String {
 	return &String{}
 }
@@ -94,4 +96,14 @@ func NewString() *String {
 // Replace ...
 func (str *String) Replace(s, old, new string, n int) string {
 	return strings.Replace(s, old, new, n)
+}
+
+// Split ...
+func (str *String) Split(s, sep string) []string {
+	return strings.Split(s, sep)
+}
+
+// NewReplacer ...
+func (str *String) NewReplacer(oldnew ...string) *strings.Replacer {
+	return strings.NewReplacer(oldnew...)
 }
