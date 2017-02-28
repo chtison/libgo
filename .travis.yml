@@ -1,6 +1,6 @@
 language: go
 go:
-        - tip
+    - tip
 install:
     - go get gopkg.in/yaml.v2
-script: make test
+script: go test -v ./...
