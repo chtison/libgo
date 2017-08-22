@@ -2,42 +2,54 @@ package cli
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"sort"
+	"strings"
 	"text/template"
 )
 
 // Template ...
-const Template = `Usage:  {{.Name}} {{with .Arguments}}{{.}}{{else}}COMMAND{{end}}
-{{- with .Synopsys}}
-
+const Template = `Usage:  {{.Path}} {{with .Arguments}}{{.}}{{else}}COMMAND{{end}}
+{{with .Synopsys}}
 {{.}}{{end}}
 {{- with .Options}}
 
 Options:
 {{.}}{{end}}
 {{- with .Commands}}
-
 Commands:
 {{.}}{{end}}
 {{- with .Footer}}
 
-{{.}}{{end}}
-`
+{{.}}
+{{end}}`
 
 // Usage ...
 func Usage(cmd *Command, args ...string) error {
 	t := template.Must(template.New("usage").Parse(Template))
+	path := usageFormatPath(cmd)
 	m := map[string]interface{}{
-		"Name":      cmd.name,
+		"Path":      path,
 		"Arguments": cmd.Usage.Arguments,
 		"Synopsys":  cmd.Usage.Synopsys,
 		"Options":   usageFormatOptions(cmd.Flags),
-		"Commands":  usageFormatCommands(cmd.children),
-		"Footer":    usageFormatFooter(cmd.Flags),
+		"Commands":  usageFormatCommands(cmd.Children),
+		"Footer":    usageFormatFooter(cmd.Children, path),
 	}
 	t.Execute(os.Stderr, m)
 	return nil
+}
+
+func usageFormatPath(cmd *Command) string {
+	slice := make([]string, 0, 1)
+	for p := cmd; p != nil; p = p.parent {
+		slice = append(slice, p.name)
+	}
+	for i, j := 0, len(slice)-1; i < j; i, j = i+1, j-1 {
+		slice[i], slice[j] = slice[j], slice[i]
+	}
+	return strings.Join(slice, " ")
 }
 
 func usageFormatOptions(set *FlagSet) string {
@@ -62,7 +74,7 @@ func usageFormatOptions(set *FlagSet) string {
 		flagType := flag.Type()
 		buf.WriteString("--" + longName + " " + flagType)
 		for i := 18 - len(longName) - len(flagType); i > 0; i-- {
-			buf.WriteByte(' ')
+			buf.WriteRune(' ')
 		}
 		buf.WriteString(flag.Usage().Synopsys + "\n")
 	}
@@ -70,9 +82,29 @@ func usageFormatOptions(set *FlagSet) string {
 }
 
 func usageFormatCommands(set CommandSet) string {
-	return ""
+	if len(set) == 0 {
+		return ""
+	}
+	keys := make([]string, 0, len(set))
+	for k := range set {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	var buf bytes.Buffer
+	for _, k := range keys {
+		cmd := set[k]
+		buf.WriteString("  " + cmd.name)
+		for i := 14 - len(cmd.name); i > 0; i-- {
+			buf.WriteRune(' ')
+		}
+		buf.WriteString(cmd.Usage.Synopsys)
+	}
+	return buf.String()
 }
 
-func usageFormatFooter(set *FlagSet) string {
+func usageFormatFooter(set CommandSet, path string) string {
+	if len(set) > 0 {
+		return fmt.Sprintf(`Run '%s COMMAND --help' for more information on a command.`, path)
+	}
 	return ""
 }

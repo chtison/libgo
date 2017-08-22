@@ -8,7 +8,7 @@ type (
 		name     string
 		Function func(*Command, ...string) error
 		Flags    *FlagSet
-		children CommandSet
+		Children CommandSet
 		parent   *Command
 		Usage    CommandUsage
 	}
@@ -36,7 +36,7 @@ func NewCommand(name string) *Command {
 	cmd := &Command{
 		name:     name,
 		Flags:    NewFlagSet(),
-		children: NewCommandSet(),
+		Children: NewCommandSet(),
 		Function: Usage,
 	}
 	flagHelp := NewFlagBool(0, "help", false)
@@ -130,8 +130,11 @@ func (cmd *Command) execute(flagStop bool, commandLine ...string) error {
 			continue
 		}
 		// Handle child command
-		if child := cmd.children.Find(string(arg)); child != nil {
-			return child.execute(flagStop, commandLine[i+1:]...)
+		if cmd.Children != nil {
+			if child := cmd.Children.Find(string(arg)); child != nil {
+				child.parent = cmd
+				return child.execute(flagStop, commandLine[i+1:]...)
+			}
 		}
 		break
 	}
