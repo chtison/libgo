@@ -21,7 +21,6 @@ Options:
 Commands:
 {{.}}{{end}}
 {{- with .Footer}}
-
 {{.}}
 {{end}}`
 
@@ -76,7 +75,8 @@ func usageFormatOptions(set *FlagSet) string {
 		for i := 18 - len(longName) - len(flagType); i > 0; i-- {
 			buf.WriteRune(' ')
 		}
-		buf.WriteString(flag.Usage().Synopsys + "\n")
+		buf.WriteString(flag.Usage().Synopsys)
+		buf.WriteString(fmt.Sprintln(""))
 	}
 	return buf.String()
 }
@@ -97,7 +97,7 @@ func usageFormatCommands(set CommandSet) string {
 		for i := 14 - len(cmd.name); i > 0; i-- {
 			buf.WriteRune(' ')
 		}
-		buf.WriteString(cmd.Usage.Synopsys)
+		buf.WriteString(cmd.Usage.Synopsys + "\n")
 	}
 	return buf.String()
 }
