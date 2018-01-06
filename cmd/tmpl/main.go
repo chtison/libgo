@@ -37,9 +37,19 @@ func entrypoint(cmd *cli.Command, args ...string) error {
 	if len(args) < 1 {
 		return cli.Usage(cmd)
 	}
-	t, err := template.New(args[0]).Funcs(tmpl.Funcs()).ParseFiles(args...)
+	t, err := template.New(args[0]).Funcs(tmpl.Funcs()).ParseFiles(args[0])
 	if err != nil {
 		return err
+	}
+	for i := range args[1:] {
+		b, err := ioutil.ReadFile(args[i+1])
+		if err != nil {
+			return err
+		}
+		fmt.Println(args[i+1])
+		if _, err := t.New(args[i+1]).Parse(string(b)); err != nil {
+			return err
+		}
 	}
 	m := map[interface{}]interface{}{}
 	for _, fileName := range flagYaml.Value {
