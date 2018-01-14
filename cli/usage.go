@@ -89,7 +89,6 @@ func usageFormatCommands(set CommandSet) string {
 	for k := range set {
 		keys = append(keys, k)
 	}
-	sort.Strings(keys)
 	var buf bytes.Buffer
 	for _, k := range keys {
 		cmd := set[k]
