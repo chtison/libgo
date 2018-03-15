@@ -1,4 +1,6 @@
-#!/bin/sh -e --
+#!/bin/sh
+
+set -e
 
 PACKAGES="
 			fmt
@@ -27,7 +29,7 @@ import "$1"
 type $TYPE struct {
 $(echo "$FUNCTIONS" | while read -r F; do
 	NAME=`echo $F | cut -d'(' -f1`
-	SIGN=`echo $F | cut -d'(' -f2- | sed -E "s/([ \*(])([[:upper:]])/\1$PACKAGE.\2/g"`
+	SIGN=`echo $F | cut -d'(' -f2- | sed -E "s/([] \*(]|\.\.\.)([[:upper:]])/\1$PACKAGE.\2/g"`
 	echo "$NAME" 'func(' "$SIGN"
 done)
 }
