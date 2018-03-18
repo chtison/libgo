@@ -14,14 +14,14 @@ import (
 
 var (
 	cmd = &cobra.Command{
-		Version: "1.10.0",
-		Use: fmt.Sprintf("%s [FLAGS] TEMPLATE [TEMPLATE ...]", filepath.Base(os.Args[0])),
-		Short: "A CLI for the golang template engine",
+		Version:               "1.10.0",
+		Use:                   fmt.Sprintf("%s [FLAGS] TEMPLATE [TEMPLATE ...]", filepath.Base(os.Args[0])),
+		Short:                 "A CLI for the golang template engine",
 		DisableSuggestions:    true,
 		DisableFlagsInUseLine: true,
 		SilenceUsage:          true,
-		Args:  cobra.MinimumNArgs(1),
-		RunE: handler,
+		Args:                  cobra.MinimumNArgs(1),
+		RunE:                  handler,
 	}
 	flagYamlData []string
 )

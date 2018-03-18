@@ -44,7 +44,7 @@ func generate(importPath string) error {
 			case *types.Func:
 				t := object.Type().(*types.Signature)
 				b.Println("")
-				b.Printf("func (_ *%s) ", typeName)
+				b.Printf("func (*%s) ", typeName)
 				b.Print(strings.SplitN(types.ObjectString(object, func(pkg *types.Package) string { return path.Base(pkg.Path()) }), ".", 2)[1])
 				b.Println(" {")
 				if t.Results() != nil {
@@ -64,7 +64,7 @@ func generate(importPath string) error {
 				b.Println(")")
 				b.Println("}")
 			case *types.Const, *types.Var:
-				b.Printf("func (_ %s) %s() ", typeName, object.Name())
+				b.Printf("func (%s) %s() ", typeName, object.Name())
 				switch t := object.Type().(type) {
 				case *types.Basic:
 					b.Printf("%s", strings.TrimPrefix(t.String(), "untyped "))
@@ -76,7 +76,7 @@ func generate(importPath string) error {
 		}
 	}
 	os.MkdirAll("generated", 0755)
-	p := filepath.Join("generated", importPathBase + ".go")
+	p := filepath.Join("generated", importPathBase+".go")
 	if err := ioutil.WriteFile(p, []byte(b.String()), 0644); err != nil {
 		return err
 	}

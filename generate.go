@@ -32,7 +32,7 @@ func generate(importPath string) error {
 	b.Printfln("package %s", pkg.Name())
 	b.Printfln(`import "%s"`, importPath)
 	consts := make([]types.Object, 0)
-	vars   := make([]types.Object, 0)
+	vars := make([]types.Object, 0)
 	funcs := make([]types.Object, 0)
 	typeNames := make([]types.Object, 0)
 	scope := pkg.Scope()
