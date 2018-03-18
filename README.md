@@ -1,4 +1,4 @@
-![gopher golang](misc/libgo.png)
+![gopher golang](README.png)
 
 # LIBGO
 
