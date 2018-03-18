@@ -1,41 +1,41 @@
 package fmt
 
-import "fmt"
-
-// ...
-var (
-	Errorf   = fmt.Errorf
-	Fprint   = fmt.Fprint
-	Fprintf  = fmt.Fprintf
-	Fprintln = fmt.Fprintln
-	Fscan    = fmt.Fscan
-	Fscanf   = fmt.Fscanf
-	Fscanln  = fmt.Fscanln
-	Print    = fmt.Print
-	Printf   = fmt.Printf
-	Println  = fmt.Println
-	Scan     = fmt.Scan
-	Scanf    = fmt.Scanf
-	Scanln   = fmt.Scanln
-	Sprint   = fmt.Sprint
-	Sprintf  = fmt.Sprintf
-	Sprintln = fmt.Sprintln
-	Sscan    = fmt.Sscan
-	Sscanf   = fmt.Sscanf
-	Sscanln  = fmt.Sscanln
+import (
+	"fmt"
+	"io"
+	"strings"
 )
 
-type (
-	// Formatter ...
-	Formatter = fmt.Formatter
-	// GoStringer ...
-	GoStringer = fmt.GoStringer
-	// ScanState ...
-	ScanState = fmt.ScanState
-	// Scanner ...
-	Scanner = fmt.Scanner
-	// State ...
-	State = fmt.State
-	// Stringer ...
-	Stringer = fmt.Stringer
-)
+func Printfln(format string, a ...interface{}) (n int, err error) {
+	return fmt.Println(fmt.Sprintf(format, a...))
+}
+
+func Fprintfln(w io.Writer, format string, a ...interface{}) (n int, err error) {
+	return fmt.Fprintln(w, fmt.Sprintf(format, a...))
+}
+
+type Builder struct {
+	*strings.Builder
+}
+
+func NewBuilder() *Builder {
+	return &Builder{
+		Builder: &strings.Builder{},
+	}
+}
+
+func (b *Builder) Print(a ...interface{}) (int, error) {
+	return fmt.Fprint(b, a...)
+}
+
+func (b *Builder) Println(a ...interface{}) (int, error) {
+	return fmt.Fprintln(b, a...)
+}
+
+func (b *Builder) Printf(format string, a ...interface{}) (int, error) {
+	return fmt.Fprintf(b, format, a...)
+}
+
+func (b *Builder) Printfln(format string, a ...interface{}) (int, error) {
+	return Fprintfln(b, format, a...)
+}

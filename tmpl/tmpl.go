@@ -1,7 +1,5 @@
 package tmpl
 
-//go:generate ./generate.sh
-
 import (
 	"reflect"
 	"text/template"
@@ -9,7 +7,6 @@ import (
 	"github.com/chtison/libgo/tmpl/generated"
 )
 
-// Funcs ...
 func Funcs() template.FuncMap {
 	return template.FuncMap{
 		"fmt":     generated.NewFmt,
