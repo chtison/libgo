@@ -34,6 +34,7 @@ func generate(importPath string) error {
 	importPathBase := filepath.Base(importPath)
 	typeName := strings.Title(importPathBase)
 	b.Println("package generated")
+	b.Printfln(`import "%s"`, importPath)
 	b.Printfln("type %s struct {}", typeName)
 	b.Printfln("func New%s() *%[1]s { return &%[1]s{} }", typeName)
 	scope := pkg.Scope()
@@ -42,28 +43,12 @@ func generate(importPath string) error {
 		if object.Exported() {
 			switch object.(type) {
 			case *types.Func:
-				t := object.Type().(*types.Signature)
-				b.Println("")
-				b.Printf("func (*%s) ", typeName)
-				b.Print(strings.SplitN(types.ObjectString(object, func(pkg *types.Package) string { return path.Base(pkg.Path()) }), ".", 2)[1])
-				b.Println(" {")
-				if t.Results() != nil {
-					b.Print("return ")
-				}
-				b.Printf("%s.%s(", importPathBase, object.Name())
-				params := t.Params()
-				for i := 0; i < params.Len(); i++ {
-					if i > 0 {
-						b.Print(", ")
-					}
-					b.Printf("%s", params.At(i).Name())
-				}
-				if t.Variadic() {
-					b.Print("...")
-				}
-				b.Println(")")
-				b.Println("}")
+				generateSignature(b, object, importPathBase, typeName)
 			case *types.Const, *types.Var:
+				if _, ok := object.Type().(*types.Signature); ok {
+					generateSignature(b, object, importPathBase, typeName)
+					break
+				}
 				b.Printf("func (%s) %s() ", typeName, object.Name())
 				switch t := object.Type().(type) {
 				case *types.Basic:
@@ -82,4 +67,62 @@ func generate(importPath string) error {
 	}
 	fmt.Printfln("+ %s successfully generated", p)
 	return nil
+}
+
+func generateSignature(b *fmt.Builder, object types.Object, importPathBase, typeName string) {
+	sig := object.Type().(*types.Signature)
+	b.Println("")
+	b.Printf("func (*%s) %s(", typeName, object.Name())
+	generateSignatureParams(b, sig, true)
+	b.Print(") ")
+	results := sig.Results()
+	if results.Len() > 1 {
+		b.Print("(")
+	}
+	for i := 0; i < results.Len(); i++ {
+		if i > 0 {
+			b.Print(", ")
+		}
+		b.Print(types.TypeString(results.At(i).Type(), qualifier))
+	}
+	if results.Len() > 1 {
+		b.Print(")")
+	}
+	b.Println(" {")
+	if results != nil && results.Len() > 0 {
+		b.Print("return ")
+	}
+	b.Printf("%s.%s(", importPathBase, object.Name())
+	generateSignatureParams(b, sig, false)
+	if sig.Variadic() {
+		b.Print("...")
+	}
+	b.Println(")")
+	b.Println("}")
+}
+
+func generateSignatureParams(b *fmt.Builder, sig *types.Signature, printType bool) {
+	params := sig.Params()
+	if params == nil {
+		return
+	}
+	for i := 0; i < params.Len(); i++ {
+		if i > 0 {
+			b.Print(", ")
+		}
+		b.Print(params.At(i).Name())
+		if printType {
+			s := types.TypeString(params.At(i).Type(), qualifier)
+			if i < params.Len()-1 || !sig.Variadic() {
+				b.Printf(" %s", s)
+			} else {
+				s = strings.Replace(s, "[]", "...", 1)
+				b.Printf(" %s", s)
+			}
+		}
+	}
+}
+
+func qualifier(p *types.Package) string {
+	return path.Base(p.Name())
 }

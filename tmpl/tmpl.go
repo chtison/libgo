@@ -10,8 +10,10 @@ import (
 func Funcs() template.FuncMap {
 	return template.FuncMap{
 		"fmt":     generated.NewFmt,
+		"json":    generated.NewJson,
 		"strings": generated.NewStrings,
 		"time":    generated.NewTime,
+		"yaml":    generated.NewYaml,
 		"isType":  isType,
 	}
 }
