@@ -29,7 +29,7 @@ func MarshalIndent(v interface{}, prefix, indent string) ([]byte, error) {
 		text := scanner.Text()
 		for i, c := range text {
 			if c != ' ' {
-				text = strings.Replace(text, "  ", indent, i / 2)
+				text = strings.Replace(text, "  ", indent, i/2)
 				break
 			}
 		}

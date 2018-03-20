@@ -1,6 +1,7 @@
 .PHONY: generate
 
-GENERATE  := fmt strings time encoding/json github.com/chtison/libgo/yaml
+GENERATE  := fmt strings time encoding/json \
+				github.com/chtison/libgo/deepcopy github.com/chtison/libgo/yaml
 GENERATED := $(addprefix generated/, $(addsuffix .go, $(notdir $(GENERATE))))
 
 generate: $(GENERATED)
