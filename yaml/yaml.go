@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/chtison/libgo/errors"
 	"github.com/chtison/libgo/fmt"
 	"github.com/go-yaml/yaml"
 )
@@ -52,4 +53,29 @@ func ReadFile(filename string, out interface{}) error {
 		return err
 	}
 	return yaml.Unmarshal(b, out)
+}
+
+// ReadFiles reads files content and unmarshal it as yaml to data
+func ReadFiles(data interface{}, stopOnError bool, files ...string) error {
+  var errs errors.Error = nil
+  for _, file := range files {
+    b, err := ioutil.ReadFile(file)
+    if err != nil {
+      if !stopOnError {
+        errs = append(errs, err)
+        continue
+      }
+      return err
+    }
+    if err := yaml.Unmarshal(b, data); err != nil {
+      if stopOnError {
+        return err
+      }
+      errs = append(errs, err)
+    }
+  }
+  if errs == nil {
+    return nil
+  }
+  return errs
 }
